@@ -1,12 +1,10 @@
 import base64
-import httpx
 import json
 import os
 import google.generativeai as genai
 from PIL import Image
-import sqlite3
 
-genai.configure(api_key=os.environ['GEMINI_API_KEY'])
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # 画像をリサイズする
 def resize_image(image_path):
@@ -45,15 +43,18 @@ def post_image(image_path):
     # 個数
     # 長いレシートはどうする？
     # 大まかなジャンルも出力するとよいかもしれない
+
     prompt = """画像にはレシートが含まれています。レシートの内容をjson形式で出力してください\n
+                また、genreには商品やサービスの内容から判断して、適切なジャンル名を出力してください\n
             例：\n
             {   
                 "store": "store_name",
+                "genre": ジャンル名（食品、書籍、家電etc...）,
                 "datetime": iso8601の日時,
                 "total": （税込みの）合計金額,
                 "items": [
-                    {"name": "item1", "price": 500, "quantity": 2},
-                    {"name": "item2", "price": 500, "quantity": 1}
+                    {"name": "item1", "price": 500},
+                    {"name": "item2", "price": 500}
                 ]
             }
             もし画像にレシートが含まれていない場合は、その旨を出力してください\n
@@ -69,8 +70,12 @@ def post_image(image_path):
     # レスポンスの整形
     try:
         json_str = response.text.strip('```json\n').strip('```')
+        print(json_str)
         return json.loads(json_str)
     except json.JSONDecodeError:
         raise Exception("レシートが含まれていません")
+
+# テスト
+post_image(R"C:\Users\hugu\Desktop\python\receipt_kanri\images\1741330693309.jpg")
 
 

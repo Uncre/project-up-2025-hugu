@@ -1,5 +1,4 @@
 import sqlite3
-import uuid
 
 def init_db():
     conn = sqlite3.connect('receipts.db')
@@ -8,8 +7,9 @@ def init_db():
     # レシート一覧テーブルの作成
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS receipts (
-            id TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             store TEXT,
+            genre TEXT,
             datetime TEXT,
             total REAL
         )
@@ -29,22 +29,27 @@ def init_db():
     conn.commit()
     conn.close()
 
-def save_to_db(receipt_id, response):
+def save_to_db(response):
     conn = sqlite3.connect('receipts.db')
     cursor = conn.cursor()
     
     # レシート情報の保存
     cursor.execute('''
-        INSERT INTO receipts (id, store, datetime, total)
+        INSERT INTO receipts (store, genre, datetime, total)
         VALUES (?, ?, ?, ?)
-    ''', (receipt_id, response['store'], response['datetime'], response['total']))
+    ''', (response['store'], response['genre'], response['datetime'], response['total']))
     
+    # レシートIDの取得
+    receipt_id = cursor.lastrowid
+
     # 商品情報の保存
     for item in response['items']:
         cursor.execute('''
             INSERT INTO items (receipt_id, name, price)
             VALUES (?, ?, ?)
         ''', (receipt_id, item['name'], item['price']))
+
+    print(f"レシート情報をデータベースに保存しました: {receipt_id}")
     
     conn.commit()
     conn.close()
