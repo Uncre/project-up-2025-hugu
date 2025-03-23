@@ -84,3 +84,4 @@ if __name__ == "__main__":
 # TODO: DBの内容をCSVに出力、html形式でwebuiに表示　(CSV経由しなくてもよくね？)
 # →gradioでdataframeを表示する方法があるので、それを使う OK
 # TODO: 検索機能の拡充（IDによる商品詳細の絞りこみなど）
+# TODO: 概要に統計データを表示

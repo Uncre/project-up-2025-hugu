@@ -29,13 +29,14 @@ def resize_image(image_path):
         image.save(image_path)
 
 
-def post_image(folder_path, api_key) -> list:
+def post_image(folder_path, api_key, is_discord=False) -> list:
 
     # フォルダパスの設定
     if folder_path == "":
         folder_path = "images"
 
     # APIキーの設定
+    # 空の場合は環境変数から取得する
     if api_key == "":
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
     else:
@@ -96,10 +97,12 @@ def post_image(folder_path, api_key) -> list:
 
             # レスポンスをリストに追加
             response_list.append(json.loads(json_str))
-            
-            # 処理が成功した画像を別フォルダに移動する
-            os.makedirs("success", exist_ok=True)
-            shutil.move(image_path, "success")
+
+            # discordからのリクエストでない場合は画像を削除する
+            if not is_discord:
+                # 処理が成功した画像を別フォルダに移動する
+                os.makedirs("success", exist_ok=True)
+                shutil.move(image_path, "success")
             
         except json.JSONDecodeError:
             raise Exception("レシートが含まれていません")
@@ -168,7 +171,7 @@ def save_to_db(response_list: list):
     conn.close()
 
 
-def main_process(folder_path, api_key):
+def main_process(folder_path, api_key, is_discord=False):
     response = post_image(folder_path, api_key)
     init_db()
     save_to_db(response)
