@@ -43,12 +43,15 @@ def post_image(folder_path, api_key, is_discord=False) -> list:
         genai.configure(api_key=api_key)
 
     model = genai.GenerativeModel("gemini-2.0-flash")
-    
-    # 画像ファイルのパスを取得する
-    folder_path = os.path.join(folder_path, "*.jpg")
-    image_list = glob.glob(folder_path)
-    if len(image_list) == 0:
-        raise Exception("画像が見つかりません")
+
+    if is_discord:
+        image_list = [folder_path]
+    else:
+        # 画像ファイルのパスを取得する
+        folder_path = os.path.join(folder_path, "*.jpg")
+        image_list = glob.glob(folder_path)
+        if len(image_list) == 0:
+            raise Exception("画像が見つかりません")
 
     response_list = []
 
@@ -172,7 +175,7 @@ def save_to_db(response_list: list):
 
 
 def main_process(folder_path, api_key, is_discord=False):
-    response = post_image(folder_path, api_key)
+    response = post_image(folder_path, api_key, is_discord=is_discord)
     init_db()
     save_to_db(response)
     return json.dumps(response, indent=4, ensure_ascii=False)

@@ -32,7 +32,8 @@ def export_database_to_excel(output_path=None):
     
     # ISO8601形式の日時を適切に処理
     # 表示用に日時のフォーマットを変更（オリジナルデータは保持）
-    receipts_df['formatted_date'] = pd.to_datetime(receipts_df['datetime']).dt.strftime('%Y-%m-%d %H:%M:%S')
+    # 秒がないときの例外処理はISO8601をformatで指定することで対応
+    receipts_df['formatted_date'] = pd.to_datetime(receipts_df['datetime'], format='ISO8601').dt.strftime('%Y-%m-%d %H:%M:%S')
     
     # 集計データを作成
     # 店舗ごとの合計金額

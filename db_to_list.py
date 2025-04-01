@@ -14,7 +14,7 @@ def get_receipts_list():
     receipts_df = pd.read_sql_query("SELECT * FROM receipts", conn)
     
     # ISO8601形式の日時を読みやすい形式に変換
-    receipts_df['datetime_formatted'] = pd.to_datetime(receipts_df['datetime']).dt.strftime('%Y-%m-%d %H:%M:%S')
+    receipts_df['datetime_formatted'] = pd.to_datetime(receipts_df['datetime'], format='ISO8601').dt.strftime('%Y-%m-%d %H:%M:%S')
     
     # データのみを二次元配列として取得
     result = receipts_df[['id', 'store', 'genre', 'datetime', 'total', 'datetime_formatted']].values.tolist()
@@ -91,7 +91,7 @@ def get_monthly_summary():
     receipts_df = pd.read_sql_query("SELECT * FROM receipts", conn)
     
     # ISO8601形式の日時から年月を抽出
-    receipts_df['month'] = pd.to_datetime(receipts_df['datetime']).dt.strftime('%Y-%m')
+    receipts_df['month'] = pd.to_datetime(receipts_df['datetime'], format='ISO8601').dt.strftime('%Y-%m')
     
     # 月ごとの合計金額を集計
     monthly_summary = receipts_df.groupby('month')['total'].sum().reset_index()

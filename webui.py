@@ -80,7 +80,7 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 # TODO: excel形式などで出力する ←OK
-# TODO: Discordとの連携
+# TODO: Discordとの連携 ←制作中
 # TODO: DBの内容をCSVに出力、html形式でwebuiに表示　(CSV経由しなくてもよくね？)
 # →gradioでdataframeを表示する方法があるので、それを使う OK
 # TODO: 検索機能の拡充（IDによる商品詳細の絞りこみなど）

@@ -1,0 +1,12 @@
+base64
+google-generativeai
+Pillow
+sqlite3
+discord
+glob2
+shutil
+gradio
+fastapi
+uvicorn
+pandas
+xlsxwriter
